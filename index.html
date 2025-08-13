@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Zoo Game</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+    <div id="game-container">
+        <div id="ui-overlay">
+            <div id="header">
+                <h1>🦁 3D Zoo Adventure</h1>
+                <div id="controls-info">
+                    <p>Mouse: Rotate | Scroll: Zoom | Right-click: Pan</p>
+                </div>
+            </div>
+            
+            <div id="sidebar">
+                <div id="animal-info">
+                    <h3>Animal Info</h3>
+                    <div id="selected-animal">Click on an animal to learn more!</div>
+                </div>
+                
+                <div id="game-controls">
+                    <h3>Controls</h3>
+                    <button id="reset-camera">Reset Camera</button>
+                    <button id="toggle-animations">Toggle Animations</button>
+                    <button id="day-night-toggle">Toggle Day/Night</button>
+                </div>
+                
+                <div id="zoo-stats">
+                    <h3>Zoo Stats</h3>
+                    <div id="animal-count">Animals: 0</div>
+                    <div id="visitor-count">Visitors: 0</div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="loading-screen">
+            <div class="loading-content">
+                <h2>Loading Zoo...</h2>
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="game.js"></script>
+</body>
+</html>
+
