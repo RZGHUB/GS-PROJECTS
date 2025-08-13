@@ -31,7 +31,7 @@ class ZooGame {
 
     setupScene() {
         this.scene = new THREE.Scene();
-        this.scene.fog = new THREE.Fog(0x87CEEB, 100, 400);
+        this.scene.fog = new THREE.Fog(0x87CEEB, 50, 200);
     }
 
     setupCamera() {
@@ -41,7 +41,7 @@ class ZooGame {
             0.1,
             1000
         );
-        this.camera.position.set(40, 30, 40);
+        this.camera.position.set(20, 15, 20);
         this.camera.lookAt(0, 0, 0);
     }
 
@@ -60,8 +60,8 @@ class ZooGame {
         this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enableDamping = true;
         this.controls.dampingFactor = 0.05;
-        this.controls.maxDistance = 200;
-        this.controls.minDistance = 10;
+        this.controls.maxDistance = 100;
+        this.controls.minDistance = 5;
         this.controls.maxPolarAngle = Math.PI / 2;
     }
 
@@ -72,28 +72,28 @@ class ZooGame {
 
         // Directional light (sun)
         this.sunLight = new THREE.DirectionalLight(0xffffff, 1);
-        this.sunLight.position.set(100, 100, 100);
+        this.sunLight.position.set(50, 50, 50);
         this.sunLight.castShadow = true;
-        this.sunLight.shadow.mapSize.width = 4096;
-        this.sunLight.shadow.mapSize.height = 4096;
+        this.sunLight.shadow.mapSize.width = 2048;
+        this.sunLight.shadow.mapSize.height = 2048;
         this.sunLight.shadow.camera.near = 0.5;
-        this.sunLight.shadow.camera.far = 1000;
-        this.sunLight.shadow.camera.left = -100;
-        this.sunLight.shadow.camera.right = 100;
-        this.sunLight.shadow.camera.top = 100;
-        this.sunLight.shadow.camera.bottom = -100;
+        this.sunLight.shadow.camera.far = 500;
+        this.sunLight.shadow.camera.left = -50;
+        this.sunLight.shadow.camera.right = 50;
+        this.sunLight.shadow.camera.top = 50;
+        this.sunLight.shadow.camera.bottom = -50;
         this.scene.add(this.sunLight);
 
         // Moon light (for night)
         this.moonLight = new THREE.DirectionalLight(0x4040ff, 0.3);
-        this.moonLight.position.set(-100, 100, -100);
+        this.moonLight.position.set(-50, 50, -50);
         this.moonLight.visible = false;
         this.scene.add(this.moonLight);
     }
 
     createEnvironment() {
-        // Ground - much bigger now
-        const groundGeometry = new THREE.PlaneGeometry(200, 200);
+        // Ground
+        const groundGeometry = new THREE.PlaneGeometry(100, 100);
         const groundMaterial = new THREE.MeshLambertMaterial({ 
             color: 0x90EE90,
             side: THREE.DoubleSide 
@@ -103,51 +103,26 @@ class ZooGame {
         ground.receiveShadow = true;
         this.scene.add(ground);
 
-        // More trees for bigger map
-        for (let i = 0; i < 40; i++) {
+        // Trees
+        for (let i = 0; i < 15; i++) {
             this.createTree(
-                (Math.random() - 0.5) * 160,
+                (Math.random() - 0.5) * 80,
                 0,
-                (Math.random() - 0.5) * 160
+                (Math.random() - 0.5) * 80
             );
         }
 
-        // More rocks
-        for (let i = 0; i < 20; i++) {
+        // Rocks
+        for (let i = 0; i < 8; i++) {
             this.createRock(
-                (Math.random() - 0.5) * 120,
+                (Math.random() - 0.5) * 60,
                 0,
-                (Math.random() - 0.5) * 120
+                (Math.random() - 0.5) * 60
             );
         }
 
-        // Multiple water ponds
-        this.createPond(30, 0, -40);
-        this.createPond(-30, 0, 40);
-        this.createPond(60, 0, 20);
-
-        // Add some hills
-        this.createHills();
-    }
-
-    createHills() {
-        for (let i = 0; i < 5; i++) {
-            const hillGeometry = new THREE.SphereGeometry(15 + Math.random() * 10, 16, 16);
-            const hillMaterial = new THREE.MeshLambertMaterial({ 
-                color: 0x8FBC8F,
-                transparent: true,
-                opacity: 0.8
-            });
-            const hill = new THREE.Mesh(hillGeometry, hillMaterial);
-            hill.position.set(
-                (Math.random() - 0.5) * 120,
-                5 + Math.random() * 5,
-                (Math.random() - 0.5) * 120
-            );
-            hill.scale.y = 0.5;
-            hill.receiveShadow = true;
-            this.scene.add(hill);
-        }
+        // Water pond
+        this.createPond(15, 0, -20);
     }
 
     createTree(x, y, z) {
@@ -202,8 +177,8 @@ class ZooGame {
         ];
 
         animalTypes.forEach((animalType, index) => {
-            for (let i = 0; i < 3; i++) {
-                const animal = this.createAnimal(animalType, index * 20 + i * 10);
+            for (let i = 0; i < 2; i++) {
+                const animal = this.createAnimal(animalType, index * 10 + i * 5);
                 this.animals.push(animal);
             }
         });
@@ -236,9 +211,9 @@ class ZooGame {
         }
         
         animalGroup.position.set(
-            (Math.random() - 0.5) * 80 + offset,
+            (Math.random() - 0.5) * 40 + offset,
             0,
-            (Math.random() - 0.5) * 80
+            (Math.random() - 0.5) * 40
         );
         
         animalGroup.castShadow = true;
@@ -283,6 +258,32 @@ class ZooGame {
         mane.position.set(2, 2.5, 0);
         mane.scale.set(1.1, 1.1, 1.1);
         group.add(mane);
+        
+        // Eyes
+        for (let i = 0; i < 2; i++) {
+            const eyeGeometry = new THREE.SphereGeometry(0.15, 8, 8);
+            const eyeMaterial = new THREE.MeshLambertMaterial({ color: 0x000000 });
+            const eye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            eye.position.set(2.8, 2.6, (i - 0.5) * 0.4);
+            group.add(eye);
+        }
+        
+        // Nose
+        const noseGeometry = new THREE.SphereGeometry(0.1, 8, 8);
+        const noseMaterial = new THREE.MeshLambertMaterial({ color: 0x000000 });
+        const nose = new THREE.Mesh(noseGeometry, noseMaterial);
+        nose.position.set(3.2, 2.3, 0);
+        group.add(nose);
+        
+        // Ears
+        for (let i = 0; i < 2; i++) {
+            const earGeometry = new THREE.SphereGeometry(0.2, 8, 8);
+            const earMaterial = new THREE.MeshLambertMaterial({ color: 0xFFA500 });
+            const ear = new THREE.Mesh(earGeometry, earMaterial);
+            ear.position.set(2.2, 3, (i - 0.5) * 0.6);
+            ear.scale.set(1, 0.5, 1);
+            group.add(ear);
+        }
         
         // Legs
         for (let i = 0; i < 4; i++) {
@@ -358,6 +359,16 @@ class ZooGame {
             group.add(ear);
         }
         
+        // Tusks
+        for (let i = 0; i < 2; i++) {
+            const tuskGeometry = new THREE.CylinderGeometry(0.1, 0.05, 1.5);
+            const tuskMaterial = new THREE.MeshLambertMaterial({ color: 0xF5F5DC });
+            const tusk = new THREE.Mesh(tuskGeometry, tuskMaterial);
+            tusk.position.set(4, 2.2, (i - 0.5) * 0.4);
+            tusk.rotation.z = -Math.PI / 8;
+            group.add(tusk);
+        }
+        
         return group;
     }
 
@@ -386,6 +397,15 @@ class ZooGame {
         head.position.set(2.5, 7, 0);
         group.add(head);
         
+        // Eyes
+        for (let i = 0; i < 2; i++) {
+            const eyeGeometry = new THREE.SphereGeometry(0.1, 8, 8);
+            const eyeMaterial = new THREE.MeshLambertMaterial({ color: 0x000000 });
+            const eye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            eye.position.set(3, 7.2, (i - 0.5) * 0.3);
+            group.add(eye);
+        }
+        
         // Horns
         for (let i = 0; i < 2; i++) {
             const hornGeometry = new THREE.CylinderGeometry(0.1, 0.1, 0.5);
@@ -407,6 +427,19 @@ class ZooGame {
                 Math.sin(angle) * 1.5
             );
             group.add(leg);
+        }
+        
+        // Add spots on body
+        for (let i = 0; i < 12; i++) {
+            const spotGeometry = new THREE.SphereGeometry(0.3, 8, 8);
+            const spotMaterial = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
+            const spot = new THREE.Mesh(spotGeometry, spotMaterial);
+            spot.position.set(
+                (Math.random() - 0.5) * 2,
+                3 + (Math.random() - 0.5) * 1,
+                (Math.random() - 0.5) * 2
+            );
+            group.add(spot);
         }
         
         return group;
@@ -431,12 +464,37 @@ class ZooGame {
             group.add(stripe);
         }
         
+        // Add vertical stripes on body
+        for (let i = 0; i < 6; i++) {
+            const stripeGeometry = new THREE.BoxGeometry(0.1, 0.1, 2);
+            const stripeMaterial = new THREE.MeshLambertMaterial({ color: 0x000000 });
+            const stripe = new THREE.Mesh(stripeGeometry, stripeMaterial);
+            stripe.position.set((i - 3) * 0.5, 1.5, 0);
+            group.add(stripe);
+        }
+        
         // Head
         const headGeometry = new THREE.SphereGeometry(0.8, 8, 8);
         const headMaterial = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
         const head = new THREE.Mesh(headGeometry, headMaterial);
         head.position.set(2, 2, 0);
         group.add(head);
+        
+        // Eyes
+        for (let i = 0; i < 2; i++) {
+            const eyeGeometry = new THREE.SphereGeometry(0.1, 8, 8);
+            const eyeMaterial = new THREE.MeshLambertMaterial({ color: 0x000000 });
+            const eye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            eye.position.set(2.6, 2.2, (i - 0.5) * 0.3);
+            group.add(eye);
+        }
+        
+        // Nose
+        const noseGeometry = new THREE.SphereGeometry(0.08, 8, 8);
+        const noseMaterial = new THREE.MeshLambertMaterial({ color: 0x000000 });
+        const nose = new THREE.Mesh(noseGeometry, noseMaterial);
+        nose.position.set(2.7, 1.8, 0);
+        group.add(nose);
         
         // Legs
         for (let i = 0; i < 4; i++) {
@@ -479,6 +537,30 @@ class ZooGame {
         const head = new THREE.Mesh(headGeometry, headMaterial);
         head.position.set(0, 1.8, 0);
         group.add(head);
+        
+        // Eyes
+        for (let i = 0; i < 2; i++) {
+            const eyeGeometry = new THREE.SphereGeometry(0.08, 8, 8);
+            const eyeMaterial = new THREE.MeshLambertMaterial({ color: 0x000000 });
+            const eye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            eye.position.set(0.3, 1.9, (i - 0.5) * 0.2);
+            group.add(eye);
+        }
+        
+        // Nose
+        const noseGeometry = new THREE.SphereGeometry(0.05, 8, 8);
+        const noseMaterial = new THREE.MeshLambertMaterial({ color: 0x000000 });
+        const nose = new THREE.Mesh(noseGeometry, noseMaterial);
+        nose.position.set(0.5, 1.7, 0);
+        group.add(nose);
+        
+        // Mouth
+        const mouthGeometry = new THREE.SphereGeometry(0.08, 8, 8);
+        const mouthMaterial = new THREE.MeshLambertMaterial({ color: 0x000000 });
+        const mouth = new THREE.Mesh(mouthGeometry, mouthMaterial);
+        mouth.position.set(0.4, 1.5, 0);
+        mouth.scale.set(1, 0.3, 1);
+        group.add(mouth);
         
         // Arms
         for (let i = 0; i < 2; i++) {
@@ -620,7 +702,7 @@ class ZooGame {
     }
 
     resetCamera() {
-        this.camera.position.set(40, 30, 40);
+        this.camera.position.set(20, 15, 20);
         this.camera.lookAt(0, 0, 0);
         this.controls.reset();
     }
@@ -670,11 +752,11 @@ class ZooGame {
             // Move animal
             animal.position.add(userData.direction.clone().multiplyScalar(userData.speed));
             
-            // Keep animals within bounds (bigger bounds now)
-            if (Math.abs(animal.position.x) > 80) {
+            // Keep animals within bounds
+            if (Math.abs(animal.position.x) > 40) {
                 userData.direction.x *= -1;
             }
-            if (Math.abs(animal.position.z) > 80) {
+            if (Math.abs(animal.position.z) > 40) {
                 userData.direction.z *= -1;
             }
             
